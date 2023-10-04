@@ -41,4 +41,3 @@ export class AuthController {
     return this.authService.remove(+id);
   }
 }
-
