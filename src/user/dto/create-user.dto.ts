@@ -1,19 +1,23 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsString, Matches, MinLength } from "class-validator";
 
 export class CreateUserDto {
+  @ApiProperty({ example: "Lunna"})
     @IsString()
     name: string;
 
+    @ApiProperty({ example: "email.com"})
     @IsEmail()
     email: string;
 
+    @ApiProperty({ example: "@123hffg"})
     @IsString()
     @MinLength(8, { message: 'Senha deve conter 8 digitos' })
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'Senha muito fraca',
   })
     password: string;
-
+    @ApiProperty({ example: "link"})
     @IsString()
     picture: string;
 }
