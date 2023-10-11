@@ -6,7 +6,7 @@ export class CreateUserDto {
     @IsString()
     name: string;
 
-    @ApiProperty({ example: "email.com"})
+    @ApiProperty({ example: "email@.com"})
     @IsEmail()
     email: string;
 
@@ -17,7 +17,7 @@ export class CreateUserDto {
     message: 'Senha muito fraca',
   })
     password: string;
-    @ApiProperty({ example: "link"})
+    @ApiProperty({ example: "link.com/img.jpg"})
     @IsString()
     picture: string;
 }
