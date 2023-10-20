@@ -2,16 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
-import { isNull } from 'util';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(createAuthDto: CreateUserDto) {
+  create(createUserDto: CreateUserDto) {
     this.prismaService.user
-      .create({ data: createAuthDto })
+      .create({ data: createUserDto })
       .then((res) => {
         console.log('Usuário cadastrado');
         return res;
@@ -33,28 +32,28 @@ export class UserService {
 
   async findOne(id?: string, email?: string) {
     try {
-      //   if(id){
-      //     const data: User = await this.prismaService.user.findUnique({
-      //       where: { id },
-      //     });
-
-      //   } else{const data: User = await this.prismaService.user.findUnique({
+      // if (id) {
+      //   const data: User = await this.prismaService.user.findUnique({
+      //     where: { id },
+      //   });
+      //   delete data.password
+      //   return data;
+      // } else{
+      //   const data: User = await this.prismaService.user.findUnique({
       //     where: { email },
       //   });
       //   return data;
       // }
 
-      
       const data: User = await this.prismaService.user.findUnique({
-        where: id ? { id } : { email }, //ternário tipo if reduzido
+        where: id ? { id } : { email }, // ternário tipo de if reduzido
       });
       id ? delete data.password : null;
-     return data;
+      return data;
 
-      // delete data.password;
-      
+      // delete data.password; //comando para remover a senha do objeto
     } catch (error) {
-      throw Error('Id de usuário não existente!');
+      throw Error('Id de usuário não existente !');
     }
   }
 
@@ -65,10 +64,11 @@ export class UserService {
         data: updateAuthDto,
       });
 
-      delete data.password;
+      delete data.password; //comando para remover a senha do objeto
+
       return data;
     } catch (error) {
-      return 'Id de usuário não existente!';
+      return 'Id de usuário não existente !';
     }
   }
 
@@ -76,7 +76,7 @@ export class UserService {
     try {
       await this.prismaService.user.delete({ where: { id } });
     } catch (error) {
-      return 'Id de usuário não exitente!';
+      return 'Id de usuário não existente !';
     }
   }
 }

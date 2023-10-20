@@ -1,18 +1,21 @@
 // import { Injectable } from '@nestjs/common';
-// import { User } from '@prisma/client';
+// import { User } from 'src/user/entities/user.entity';
 // import { UserService } from 'src/user/user.service';
 
 // @Injectable()
 // export class AuthService {
-//     constructor(private usersService: UserService) {}
+//   constructor(private readonly usersService: UserService) {}
 
-//   async validateUser(email: string, password: string): Promise< {
+//   async validateUser(
+//     email: string,
+//     password: string,
+//   ): Promise<{
 //     id: string;
 //     email: string;
 //     name: string;
 //     picture: string;
-//     admin: boolean;
-// }| null > {
+//     admin?: boolean;
+//   } | null> {
 //     const user: User = await this.usersService.findOne(email);
 //     if (user && user.password === password) {
 //       const { password, ...result } = user;
@@ -23,8 +26,9 @@
 // }
 
 import { Injectable } from '@nestjs/common';
+
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -34,14 +38,17 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async validateUser(email: string, password: string): Promise< {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<{
     id: string;
     email: string;
     name: string;
     picture: string;
-    admin: boolean;
-}| null > {
-    const user: User = await this.usersService.findOne(email);
+    admin?: boolean;
+  } | null> {
+    const user: User = await this.usersService.findOne(undefined, email);
     if (user && user.password === password) {
       const { password, ...result } = user;
       return result;
@@ -50,9 +57,11 @@ export class AuthService {
   }
 
   async login(user: User) {
-    const payload = { email: user.email, sub: user.id };
+    const payload = user;
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 }
+
+

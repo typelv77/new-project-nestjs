@@ -4,13 +4,21 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const port = 3000 || process.env.PORT
+  const port = process.env.PORT || 3000;
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {cors:true});
 
   app.useGlobalPipes(new ValidationPipe());
 
-  const config = new DocumentBuilder().setTitle('Nest-Project').setVersion('1.0.0').addServer('http://localhost:3000', 'Local').addTag('Status').addTag('Auth').build();
+  const config = new DocumentBuilder()
+    .setTitle('Nest-Project')
+    .setVersion('1.0.0')
+    .addServer('http://localhost:3000', 'Local')
+    .addTag('Status')
+    .addTag('Auth')
+    .addTag('User')
+    .addBearerAuth()
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
@@ -18,7 +26,7 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  console.log("http://localhost:" + port + "/docs") 
+  console.log('http://localhost:' + port + '/docs');
 }
 
 bootstrap();
