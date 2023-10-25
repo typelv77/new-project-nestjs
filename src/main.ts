@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const port = process.env.PORT || 3000;
 
-  const app = await NestFactory.create(AppModule, {cors:true});
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   app.useGlobalPipes(new ValidationPipe());
 
@@ -17,6 +17,7 @@ async function bootstrap() {
     .addTag('Status')
     .addTag('Auth')
     .addTag('User')
+    .addTag('Telegram')
     .addBearerAuth()
     .build();
 
