@@ -4,18 +4,18 @@ export class SendMessageDto {
   static schedule(schedule: any) {
     throw new Error('Method not implemented.');
   }
-  @ApiProperty()
+  @ApiProperty({example:"Gg izi"})
   message: string;
 
-  @ApiProperty()
-  chatid: number;
+  @ApiProperty({example: -1002033466946})
+  chatid: number; 
 
-  @ApiProperty()
+  @ApiProperty({example: "6827435531:AAHgj-zB8zEenaJRUnrhRU0PBmmnxZUeQDU"})
   tokenbot: string;
 
- @ApiProperty()
+ @ApiProperty({example:[]})
  images: string[] | undefined
 
- @ApiProperty()
+ @ApiProperty({example:"2023-10-26T20:39:00"})
  schedule: string | Date
 }
