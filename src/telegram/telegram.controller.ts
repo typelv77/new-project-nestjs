@@ -13,6 +13,6 @@ export class TelegramController {
   async sendMessage(
     @Body() dtoMessage: SendMessageDto
   ) {
-    await this.telegramService.sendMessageSwitch(dtoMessage);
+    await this.telegramService.sendSchedule(dtoMessage);
   }
 }
