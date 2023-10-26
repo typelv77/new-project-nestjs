@@ -1,25 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Telegraf } from 'telegraf';
 import { MediaGroup } from 'telegraf/typings/telegram-types';
-import { sendMessageDto } from './dto/sendMessage.dto';
+import { SendMessageDto } from './dto/sendMessage.dto';
 
 @Injectable()
 export class TelegramService {
-  private bot: Telegraf;
-  private chatId: string;
-  // constructor() {
-  //   // Substitua 'YOUR_BOT_TOKEN' pelo token do seu bot do Telegram
-  //   this.bot = new Telegraf('6827435531:AAHgj-zB8zEenaJRUnrhRU0PBmmnxZUeQDU');
-  //   this.chatId = '-1002033466946';
-  // }
+  //  token  6827435531:AAHgj-zB8zEenaJRUnrhRU0PBmmnxZUeQDU
+  //  chatid  -1002033466946
 
-  base64ToImage(base64: string): Buffer {
-    const base64Data = base64.replace(/^data:image\/jpeg;base64;/,'')
+  private base64ToImage(base64: string): Buffer {
+    const base64Data = base64.replace(/^data:image\/jpeg;base64;/, '');
 
     return Buffer.from(base64Data, 'base64');
   }
 
-  async sendTelegrafText({
+  private async sendTelegrafText({
     message,
     chatid,
     tokenbot,
@@ -37,22 +32,28 @@ export class TelegramService {
     }
   }
 
-  async sentTelegrafMedia({ 
+  private async sentTelegrafMedia({
     message,
-      chatid,
-      tokenbot,
-      images,
-  }: sendMessageDto){
+    chatid,
+    tokenbot,
+    images,
+  }: SendMessageDto) {
     const bot = new Telegraf(tokenbot);
     const media: MediaGroup = images.map((image) => ({
-      type: "photo",
-      media:{source:this.base64ToImage(image)},
-      caption:'',
+      type: 'photo',
+      media: { source: this.base64ToImage(image) },
+      caption: '',
     }));
 
-    media[media.length -1].caption = message;
+    media[media.length - 1].caption = message;
 
-    await bot.telegram.sendMediaGroup(chatid, media)
-    console.log("Mensagem enviada")
+    await bot.telegram.sendMediaGroup(chatid, media);
+    console.log('Mensagem enviada');
+  }
+
+  async sendMessageSwitch(sendMessageDto: SendMessageDto) {
+    sendMessageDto.images
+      ? this.sentTelegrafMedia(sendMessageDto)
+      : this.sendTelegrafText(sendMessageDto);
   }
 }
