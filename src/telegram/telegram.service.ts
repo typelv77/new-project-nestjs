@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Telegraf } from 'telegraf';
-import { MediaGroup } from 'telegraf/typings/telegram-types';
 import { SendMessageDto } from './dto/sendMessage.dto';
-import * as cron from 'node-cron'
+import { MediaGroup } from 'telegraf/typings/telegram-types';
+import * as cron from 'node-cron';
 
 @Injectable()
 export class TelegramService {
   //  token  6827435531:AAHgj-zB8zEenaJRUnrhRU0PBmmnxZUeQDU
-  //  chatid  -1002033466946
+  // chatid  -1002033466946
 
   private base64ToImage(base64: string): Buffer {
-    const base64Data = base64.replace(/^data:image\/jpeg;base64;/, '');
+    const base64Data = base64.replace(/^data:image\/jpeg;base64,/, '');
 
     return Buffer.from(base64Data, 'base64');
   }
@@ -19,11 +19,7 @@ export class TelegramService {
     message,
     chatid,
     tokenbot,
-  }: {
-    message: string;
-    chatid: number;
-    tokenbot: string;
-  }) {
+  }: SendMessageDto) {
     try {
       const bot = new Telegraf(tokenbot);
       await bot.telegram.sendMessage(chatid, message);
@@ -33,7 +29,7 @@ export class TelegramService {
     }
   }
 
-  private async sentTelegrafMedia({
+  private async sendTelegrafMedia({
     message,
     chatid,
     tokenbot,
@@ -47,18 +43,19 @@ export class TelegramService {
     }));
 
     media[media.length - 1].caption = message;
+    console.log(media);
 
     await bot.telegram.sendMediaGroup(chatid, media);
     console.log('Mensagem enviada');
   }
 
-  async sendMessageSwitch(sendMessageDto: SendMessageDto) {
+  private async sendMessageSwitch(sendMessageDto: SendMessageDto) {
     sendMessageDto.images
-      ? this.sentTelegrafMedia(sendMessageDto)
+      ? this.sendTelegrafMedia(sendMessageDto)
       : this.sendTelegrafText(sendMessageDto);
   }
 
-  cronConvert(schedule: string | Date): string {
+  private cronConvert(schedule: string | Date): string {
     schedule = new Date(schedule);
     const day = schedule.getDate(); // Obtém o dia do mês (1-31)
     const month = schedule.getMonth() + 1; // Obtém o mês (0-11), adicionamos 1 para obter o mês de 1 a 12
@@ -68,11 +65,10 @@ export class TelegramService {
     return `${minuts} ${hour} ${day} ${month} *`;
   }
 
-
-  async sendSchedule(sendMessageDto: SendMessageDto){
-    const cronConvertTime = this.cronConvert(sendMessageDto.schedule)
-   cron.schedule(cronConvertTime, async ()=>{
-     await this.sendMessageSwitch(sendMessageDto);
-   });
+  async sendSchedule(sendMessageDto: SendMessageDto) {
+    const cronConvertTime = this.cronConvert(sendMessageDto.schedule);
+    cron.schedule(cronConvertTime, async () => {
+      await this.sendMessageSwitch(sendMessageDto);
+    });
   }
 }
