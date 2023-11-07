@@ -10,9 +10,7 @@ export class TelegramController {
 
   @Post('send')
   @ApiOperation({ summary: 'enviar mensagem telegram' })
-  async sendMessage(
-    @Body() dtoMessage: SendMessageDto
-  ) {
+  async sendMessage(@Body() dtoMessage: SendMessageDto) {
     await this.telegramService.sendSchedule(dtoMessage);
   }
 }

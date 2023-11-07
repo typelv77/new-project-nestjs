@@ -6,8 +6,8 @@ import * as cron from 'node-cron';
 
 @Injectable()
 export class TelegramService {
-  //  token  6827435531:AAHgj-zB8zEenaJRUnrhRU0PBmmnxZUeQDU
-  // chatid  -1002033466946
+  //   token: 6827435531:AAHgj-zB8zEenaJRUnrhRU0PBmmnxZUeQDU
+  //   chatId: -1002033466946
 
   private base64ToImage(base64: string): Buffer {
     const base64Data = base64.replace(/^data:image\/jpeg;base64,/, '');
@@ -66,7 +66,7 @@ export class TelegramService {
   }
 
   async sendSchedule(sendMessageDto: SendMessageDto) {
-    const cronConvertTime = this.cronConvert(sendMessageDto.schedule);
+    const cronConvertTime = this.cronConvert(sendMessageDto.schedule)
     cron.schedule(cronConvertTime, async () => {
       await this.sendMessageSwitch(sendMessageDto);
     });

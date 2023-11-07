@@ -40,7 +40,8 @@ export class AuthService {
 
   async validateUser(
     email: string,
-    password: string,
+    password?: string,
+    token?: number
   ): Promise<{
     id: string;
     email: string;
@@ -49,11 +50,19 @@ export class AuthService {
     admin?: boolean;
   } | null> {
     const user: User = await this.usersService.findOne(undefined, email);
+    console.log(user)
     if (user && user.password === password) {
       const { password, ...result } = user;
       return result;
     }
-    throw Error("Senha incorreta!");
+
+    if((token == user.token) && user.token !== 0){
+      const { password, ...result } = user;
+      console.log("entrei aquii")
+      return result;
+    }
+
+    throw Error(token ? "Token inválido ou expirado!" : "Senha incorreta!");
   }
 
   async login(user: User) {
